@@ -504,7 +504,7 @@ function parseDash(rows){
   const res={writerM:[],months:[],cal:{}};
   const lhi=rows.findIndex(r=>(r[0]||'').trim()==='작가');
   if(lhi>=0){
-    const mc=rows[lhi].slice(1).map(m=>(m||'').trim()).filter(m=>/\d+월/.test(m));
+    const mc=rows[lhi].slice(1).map(m=>(m||'').trim()).filter(m=>/\d+월/.test(m)&&m!=='5월');
     res.months=[...new Set(mc)];
     for(let i=lhi+1;i<rows.length;i++){
       const r=rows[i]||[];const name=(r[0]||'').trim();
@@ -515,7 +515,7 @@ function parseDash(rows){
   }
   for(let i=0;i<rows.length;i++){
     const r=rows[i]||[];const c7=(r[7]||'').trim(),c8=(r[8]||'').trim();
-    if(c7==='작가'&&/\d+월/.test(c8)){
+    if(c7==='작가'&&/\d+월/.test(c8)&&c8!=='5월'){
       const mo=c8;res.cal[mo]={};
       if(!res.months.includes(mo))res.months.push(mo);
       const drow=rows[i+1]||[];
@@ -552,6 +552,7 @@ function bdg(s){return`<span class="badge ${SB[s]||'bs'}">${s||'—'}</span>`}
 // ── Filter ──
 function getFilt(){
   return allData.filter(r=>{
+    const ym=r['요청월']||'';if(ym&&ym.endsWith('-05'))return false;
     if(filters.team!=='all'&&r['요청팀']!==filters.team)return false;
     if(filters.status!=='all'&&r['배정 여부']!==filters.status)return false;
     if(filters.search){const q=filters.search.toLowerCase();const h=['대본명','담당자','담당 Writer','요청팀','비고'].map(k=>(r[k]||'').toLowerCase()).join(' ');if(!h.includes(q))return false}
