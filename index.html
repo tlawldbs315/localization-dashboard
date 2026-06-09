@@ -380,7 +380,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Pretendard','Noto Sans KR','S
       <div class="card sc asgn">
         <div class="sc-lbl">완료율</div>
         <div class="sc-val" id="wc3">—</div>
-        <div class="sc-sub">배정 완료 기준</div>
+        <div class="sc-sub">실제 납품일 기준</div>
         <div class="sc-bar"><div class="sc-fill" id="wc3bar" style="background:var(--green);width:0%"></div></div>
       </div>
       <div class="card sc wait">
@@ -751,7 +751,7 @@ function renderWriterStats(writer) {
   }
 
   const total    = projs.length;
-  const done     = projs.filter(r => r['배정 여부'] === '배정 완료').length;
+  const done     = projs.filter(r => (r['실제 납품일'] || '').trim()).length;
   const eps      = projs.reduce((s, r) => s + (parseInt(r['분량 (에피소드 수)']) || 0), 0);
   const pct      = total ? Math.round(done / total * 100) : 0;
 
