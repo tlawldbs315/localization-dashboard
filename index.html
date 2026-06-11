@@ -580,8 +580,8 @@ const CC={'배정 완료':{bg:'rgba(22,163,74,.8)',b:'#16a34a'},'대기 중':{bg
 const STS=['배정 완료','대기 중','미배정'];
 function updCharts(d){
   const teams=[...new Set(d.map(r=>r['요청팀']).filter(Boolean))].sort();
-  const labels=teams.length?teams:['(없음)'];
-  const bdata={labels,datasets:STS.map(s=>({label:s,data:labels.map(t=>d.filter(r=>r['요청팀']===t&&r['배정 여부']===s).length),backgroundColor:CC[s].bg,borderColor:CC[s].b,borderWidth:1,borderRadius:4}))};
+  const TC=[{bg:'rgba(99,102,241,.8)',b:'#6366f1'},{bg:'rgba(236,72,153,.8)',b:'#ec4899'},{bg:'rgba(14,165,233,.8)',b:'#0ea5e9'},{bg:'rgba(249,115,22,.8)',b:'#f97316'},{bg:'rgba(168,85,247,.8)',b:'#a855f7'},{bg:'rgba(20,184,166,.8)',b:'#14b8a6'}];
+  const bdata={labels:STS,datasets:(teams.length?teams:['(없음)']).map((t,i)=>({label:t,data:STS.map(s=>d.filter(r=>r['요청팀']===t&&r['배정 여부']===s).length),backgroundColor:TC[i%TC.length].bg,borderColor:TC[i%TC.length].b,borderWidth:1,borderRadius:4}))};
   const bopt={responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom',labels:{font:{size:12},boxWidth:12,padding:12}}},scales:{x:{stacked:true,grid:{display:false},ticks:{font:{size:12}}},y:{stacked:true,beginAtZero:true,ticks:{stepSize:1,font:{size:12}},grid:{color:'#f1f5f9'}}}};
   if(charts.bar){charts.bar.data=bdata;charts.bar.update()}else charts.bar=new Chart(document.getElementById('barC'),{type:'bar',data:bdata,options:bopt});
   const cnts=STS.map(s=>d.filter(r=>r['배정 여부']===s).length);
