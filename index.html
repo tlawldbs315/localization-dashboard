@@ -313,26 +313,29 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Pretendard','Noto Sans KR','S
       <div class="card sc eps"><div class="sc-lbl">총 에피소드</div><div class="sc-val" id="cEps">0</div><div class="sc-sub">EP 합계</div></div>
     </div>
 
-    <!-- Writer Workload -->
-    <div id="wSection" style="display:none">
-      <div class="wg">
-        <div class="card" style="padding:20px">
+    <!-- Row 1: 작가별 프로젝트 진행 수 + 배정 상태 비중 (1:1) -->
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px">
+      <div id="wSection" style="display:none">
+        <div class="card" style="padding:20px;height:100%;box-sizing:border-box">
           <div class="sec-title">✍️ 작가별 프로젝트 진행 수</div>
           <table class="wtbl"><thead><tr id="wTblH"></tr></thead><tbody id="wTblB"></tbody></table>
         </div>
-        <div class="card" style="padding:20px">
-          <div class="cal-hdr">
-            <div class="sec-title" style="margin:0">📅 작업 현황 캘린더</div>
-            <div class="mtabs" id="mTabs"></div>
-          </div>
-          <div class="cal-wrap"><div id="calGrid"></div></div>
-        </div>
+      </div>
+      <div class="card cc">
+        <div class="ct">배정 상태 비중</div>
+        <div class="cw" style="height:220px;display:flex;align-items:center;justify-content:center"><canvas id="donutC" style="max-height:220px"></canvas></div>
       </div>
     </div>
 
-    <!-- Charts -->
-    <div style="max-width:360px;margin-bottom:18px">
-      <div class="card cc"><div class="ct">배정 상태 비중</div><div class="cw" style="height:220px;display:flex;align-items:center;justify-content:center"><canvas id="donutC" style="max-height:220px"></canvas></div></div>
+    <!-- Row 2: 작업 현황 캘린더 (full width) -->
+    <div id="calSection" style="display:none;margin-bottom:18px">
+      <div class="card" style="padding:20px">
+        <div class="cal-hdr">
+          <div class="sec-title" style="margin:0">📅 작업 현황 캘린더</div>
+          <div class="mtabs" id="mTabs"></div>
+        </div>
+        <div class="cal-wrap"><div id="calGrid"></div></div>
+      </div>
     </div>
 
     <!-- Table -->
@@ -586,8 +589,8 @@ function updCharts(d){
 
 // ── Workload ──
 function renderWorkload(){
-  if(!calData||(!calData.writerM.length&&!Object.keys(calData.cal).length)){document.getElementById('wSection').style.display='none';return}
-  document.getElementById('wSection').style.display='';
+  if(!calData||(!calData.writerM.length&&!Object.keys(calData.cal).length)){document.getElementById('wSection').style.display='none';document.getElementById('calSection').style.display='none';return}
+  document.getElementById('wSection').style.display='';document.getElementById('calSection').style.display='';
   const months=calData.months;
   document.getElementById('wTblH').innerHTML='<th>작가</th>'+months.map(m=>`<th style="text-align:center">${m}</th>`).join('');
   document.getElementById('wTblB').innerHTML=calData.writerM.map(w=>`<tr><td><strong>${w.writer}</strong></td>${months.map(m=>{const n=w[m]||0;return`<td style="text-align:center"><span class="cpill ${n>0?'has':'nope'}">${n}</span></td>`}).join('')}</tr>`).join('');
