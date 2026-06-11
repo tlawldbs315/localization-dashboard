@@ -116,7 +116,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Pretendard','Noto Sans KR','S
 .cw{position:relative}
 
 /* Writer / Calendar */
-.wg{display:grid;grid-template-columns:1fr 2fr;gap:14px;margin-bottom:18px}
+.wg{display:grid;grid-template-columns:1fr 4fr;gap:14px;margin-bottom:18px}
 .sec-title{font-size:13px;font-weight:700;color:var(--s700);margin-bottom:14px}
 .wtbl{width:100%;border-collapse:collapse;font-size:13px}
 .wtbl th{padding:8px 12px;text-align:left;font-size:11px;font-weight:700;color:var(--s500);text-transform:uppercase;letter-spacing:.04em;border-bottom:1px solid var(--s200);background:var(--s50)}
@@ -313,12 +313,6 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Pretendard','Noto Sans KR','S
       <div class="card sc eps"><div class="sc-lbl">총 에피소드</div><div class="sc-val" id="cEps">0</div><div class="sc-sub">EP 합계</div></div>
     </div>
 
-    <!-- Charts -->
-    <div class="cg">
-      <div class="card cc"><div class="ct">요청팀별 배정 현황</div><div class="cw" style="height:220px"><canvas id="barC"></canvas></div></div>
-      <div class="card cc"><div class="ct">배정 상태 비중</div><div class="cw" style="height:220px;display:flex;align-items:center;justify-content:center"><canvas id="donutC" style="max-height:220px"></canvas></div></div>
-    </div>
-
     <!-- Writer Workload -->
     <div id="wSection" style="display:none">
       <div class="wg">
@@ -334,6 +328,11 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Pretendard','Noto Sans KR','S
           <div class="cal-wrap"><div id="calGrid"></div></div>
         </div>
       </div>
+    </div>
+
+    <!-- Charts -->
+    <div style="max-width:360px;margin-bottom:18px">
+      <div class="card cc"><div class="ct">배정 상태 비중</div><div class="cw" style="height:220px;display:flex;align-items:center;justify-content:center"><canvas id="donutC" style="max-height:220px"></canvas></div></div>
     </div>
 
     <!-- Table -->
@@ -579,11 +578,6 @@ function bw(id,p){document.getElementById(id).style.width=p+'%'}
 const CC={'배정 완료':{bg:'rgba(22,163,74,.8)',b:'#16a34a'},'대기 중':{bg:'rgba(217,119,6,.8)',b:'#d97706'},'미배정':{bg:'rgba(220,38,38,.8)',b:'#dc2626'}};
 const STS=['배정 완료','대기 중','미배정'];
 function updCharts(d){
-  const teams=[...new Set(d.map(r=>r['요청팀']).filter(Boolean))].sort();
-  const TC=[{bg:'rgba(99,102,241,.8)',b:'#6366f1'},{bg:'rgba(236,72,153,.8)',b:'#ec4899'},{bg:'rgba(14,165,233,.8)',b:'#0ea5e9'},{bg:'rgba(249,115,22,.8)',b:'#f97316'},{bg:'rgba(168,85,247,.8)',b:'#a855f7'},{bg:'rgba(20,184,166,.8)',b:'#14b8a6'}];
-  const bdata={labels:STS,datasets:(teams.length?teams:['(없음)']).map((t,i)=>({label:t,data:STS.map(s=>d.filter(r=>r['요청팀']===t&&r['배정 여부']===s).length),backgroundColor:TC[i%TC.length].bg,borderColor:TC[i%TC.length].b,borderWidth:1,borderRadius:4}))};
-  const bopt={responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom',labels:{font:{size:12},boxWidth:12,padding:12}}},scales:{x:{stacked:true,grid:{display:false},ticks:{font:{size:12}}},y:{stacked:true,beginAtZero:true,ticks:{stepSize:1,font:{size:12}},grid:{color:'#f1f5f9'}}}};
-  if(charts.bar){charts.bar.data=bdata;charts.bar.update()}else charts.bar=new Chart(document.getElementById('barC'),{type:'bar',data:bdata,options:bopt});
   const cnts=STS.map(s=>d.filter(r=>r['배정 여부']===s).length);
   const ddata={labels:STS,datasets:[{data:cnts,backgroundColor:STS.map(s=>CC[s].bg),borderColor:STS.map(s=>CC[s].b),borderWidth:2,hoverOffset:6}]};
   const dopt={responsive:true,maintainAspectRatio:false,cutout:'64%',plugins:{legend:{position:'bottom',labels:{font:{size:12},boxWidth:12,padding:12}},tooltip:{callbacks:{label:ctx=>{const t=ctx.dataset.data.reduce((a,b)=>a+b,0);return` ${ctx.label}: ${ctx.parsed}건 (${t?Math.round(ctx.parsed/t*100):0}%)`}}}}};
